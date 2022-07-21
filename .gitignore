@@ -1,0 +1,4 @@
+*.out.correct
+*.in
+.vscode
+Makefile
