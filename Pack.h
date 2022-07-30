@@ -1,15 +1,13 @@
 #ifndef PACK_H
 #define PACK_H
 /* Pack.h
- *
  * Represents a pack of playing cards
- *  
  */
-
 
 #include "Card.h"
 #include <array>
 #include <string>
+
 
 class Pack {
 public:

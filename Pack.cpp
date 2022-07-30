@@ -11,7 +11,17 @@ using namespace std;
 // NOTE: The standard order is the same as that in pack.in.
 // NOTE: Do NOT use pack.in in your implementation of this function
 Pack::Pack() {
-  assert(false);
+  next = 0;
+  int k = 0;
+  for (int i = 0; i < NUM_SUITS; ++i) {
+    for (int j = 0; j < NUM_RANKS; ++j) {
+      Card card(RANK_NAMES_BY_WEIGHT[j], SUIT_NAMES_BY_WEIGHT[i]);
+      if (card.get_rank() == Card::RANK_NINE || card.get_rank() == Card::RANK_TEN 
+          || card.is_face()) {
+            cards[k++] = card;
+      }  
+    }
+  }  
 }
 
 // REQUIRES: pack_input contains a representation of a Pack in the
@@ -19,18 +29,27 @@ Pack::Pack() {
 // MODIFIES: pack_input
 // EFFECTS: Initializes Pack by reading from pack_input.
 Pack::Pack(istream& pack_input) {
-  assert(false);
+  next = 0;
+  string rank;
+  string suit;
+  string of;
+  for (int i = 0; i < PACK_SIZE; ++i) {
+    pack_input >> rank >> of >> suit;
+    Card card(rank, suit);
+    cards[i] = card;
+  }
 }
 
 // REQUIRES: cards remain in the Pack
 // EFFECTS: Returns the next card in the pack and increments the next index
 Card Pack::deal_one() {
-  assert(false);
+  assert(!(Pack::empty()));
+  return cards[next++];
 }
 
 // EFFECTS: Resets next index to first card in the Pack
 void Pack::reset() {
-  assert(false);
+  next = 0;
 }
 
 // EFFECTS: Shuffles the Pack and resets the next index. This
@@ -42,5 +61,5 @@ void Pack::shuffle() {
 
 // EFFECTS: returns true if there are no more cards left in the pack
 bool Pack::empty() const {
-  assert(false);
+  return next == PACK_SIZE;
 }
