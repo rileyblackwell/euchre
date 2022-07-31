@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <array>
 #include "Pack.h"
 
 using namespace std;
@@ -56,7 +57,16 @@ void Pack::reset() {
 //          performs an in shuffle seven times. See
 //          https://en.wikipedia.org/wiki/In_shuffle.
 void Pack::shuffle() {
-  assert(false);
+  array<Card, PACK_SIZE> temp_cards;
+  const int half_pack_size = PACK_SIZE / 2;
+  for (int i = 0; i < 7; ++i) {
+    for (int j = 0; j < half_pack_size; ++j) {
+      temp_cards[j * 2] = cards[half_pack_size + j];
+      temp_cards[j * 2 + 1] = cards[j];
+    }
+    cards = temp_cards; 
+  }  
+  Pack::reset();
 }
 
 // EFFECTS: returns true if there are no more cards left in the pack

@@ -45,7 +45,25 @@ TEST(test_pack_reset) {
 }
 
 TEST(test_pack_shuffle) {
-
+    Pack pack;
+    Card first = pack.deal_one();
+    Card second = pack.deal_one();
+    Card third = pack.deal_one();
+    while (!pack.empty()) {
+        pack.deal_one();
+    }
+    
+    pack.shuffle();
+    ASSERT_TRUE(!pack.empty());
+    
+    Card first_shuffled = pack.deal_one();
+    Card second_shuffled = pack.deal_one();
+    Card third_shuffled = pack.deal_one();  
+    ASSERT_TRUE(first != first_shuffled);
+    ASSERT_TRUE(second != second_shuffled);
+    ASSERT_TRUE(third != third_shuffled);
+    // third card in the deck should be the orignal first card for a 7x in shuffle.
+    ASSERT_TRUE(third_shuffled == first);
 }
 
 TEST(test_pack_empty) {
@@ -60,4 +78,4 @@ TEST(test_pack_empty) {
 }
 
 
-TEST_MAIN()
+TEST_MAIN() 
