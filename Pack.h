@@ -3,7 +3,6 @@
 /* Pack.h
  * Represents a pack of playing cards
  */
-
 #include "Card.h"
 #include <array>
 #include <string>

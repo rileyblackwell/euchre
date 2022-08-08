@@ -11,8 +11,7 @@ using namespace std;
 //          in order from lowest to highest rank, and so on.
 // NOTE: The standard order is the same as that in pack.in.
 // NOTE: Do NOT use pack.in in your implementation of this function
-Pack::Pack() {
-  next = 0;
+Pack::Pack() : next(0) {
   int k = 0;
   for (int i = 0; i < NUM_SUITS; ++i) {
     for (int j = 0; j < NUM_RANKS; ++j) {
@@ -29,8 +28,7 @@ Pack::Pack() {
 //           format required by the project specification
 // MODIFIES: pack_input
 // EFFECTS: Initializes Pack by reading from pack_input.
-Pack::Pack(istream& pack_input) {
-  next = 0;
+Pack::Pack(istream& pack_input) : next(0) {
   string rank;
   string suit;
   string of;

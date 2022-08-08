@@ -1,15 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 /* Player.h
- *
  * Euchre player interface
- *  
  */
-
-
 #include "Card.h"
 #include <string>
 #include <vector>
+
 
 class Player {
  public:

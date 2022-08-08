@@ -28,18 +28,18 @@ constexpr const char* const Card::SUIT_DIAMONDS;
 
 // add your code below
 static void check_rank_is_valid(const string &rank) {
-    assert(rank == "Two" || rank == "Three" || rank == "Four" || rank == "Five"
-           || rank == "Six" || rank == "Seven" || rank == "Eight" || rank == "Nine"  
-           || rank == "Ten" || rank == "Jack" || rank == "Queen" || rank == "King"
-           || rank == "Ace");
+    assert(rank == Card::RANK_TWO || rank == Card::RANK_THREE || rank == Card::RANK_FOUR || rank == Card::RANK_FIVE
+           || rank == Card::RANK_SIX || rank == Card::RANK_SEVEN || rank == Card::RANK_EIGHT || rank == Card::RANK_NINE 
+           || rank == Card::RANK_TEN || rank == Card::RANK_JACK || rank == Card::RANK_QUEEN || rank == Card::RANK_KING
+           || rank == Card::RANK_ACE);
 }
 
 static void check_suit_is_valid(const string &suit) {
-    assert(suit == "Spades" || suit == "Hearts" || suit == "Clubs" || suit == "Diamonds");
+    assert(suit == Card::SUIT_SPADES || suit == Card::SUIT_HEARTS || suit == Card::SUIT_CLUBS || suit == Card::SUIT_DIAMONDS);
 }
 
 //EFFECTS Initializes Card to the Two of Spades
-Card::Card() : rank(RANK_TWO), suit(SUIT_SPADES) {}
+Card::Card() : Card::Card(RANK_TWO, SUIT_SPADES) {}
 
 //REQUIRES rank is one of "Two", "Three", "Four", "Five", "Six", "Seven",
 //  "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace"
@@ -114,14 +114,14 @@ bool operator<(const Card &lhs, const Card &rhs) {
                 }
                 if (SUIT_NAMES_BY_WEIGHT[j] == lhs.get_suit()) {
                     return true;    
-                }else if (SUIT_NAMES_BY_WEIGHT[j] == rhs.get_suit()) {
+                } else if (SUIT_NAMES_BY_WEIGHT[j] == rhs.get_suit()) {
                     return false;
                 }
             }
         }
         if (RANK_NAMES_BY_WEIGHT[i] == lhs.get_rank()) {
             return true;
-        }else if (RANK_NAMES_BY_WEIGHT[i] == rhs.get_rank()) {
+        } else if (RANK_NAMES_BY_WEIGHT[i] == rhs.get_rank()) {
             return false;
         }  
     }
@@ -164,9 +164,9 @@ string Suit_next(const string &suit) {
     check_suit_is_valid(suit);
     if (suit == Card::SUIT_SPADES) {
         return Card::SUIT_CLUBS;
-    }else if (suit ==  Card::SUIT_CLUBS) {
+    } else if (suit ==  Card::SUIT_CLUBS) {
         return Card::SUIT_SPADES;    
-    }else if (suit == Card::SUIT_DIAMONDS) {
+    } else if (suit == Card::SUIT_DIAMONDS) {
         return Card::SUIT_HEARTS;
     } 
     // suit == Card::SUIT_HEARTS
@@ -210,7 +210,7 @@ bool Card_less(const Card &a, const Card &b, const string &trump) {
     }
     if (a.is_trump(trump)) {
         return false;
-    }else if (b.is_trump(trump)) {
+    } else if (b.is_trump(trump)) {
         return true;
     }
     return a < b;    
@@ -238,9 +238,9 @@ bool Card_less(const Card &a, const Card &b, const Card &led_card,
 
     if (is_led(a, led_card, trump) && is_led(b, led_card, trump)) {
         return a < b;
-    }else if (is_led(a, led_card, trump)) {
+    } else if (is_led(a, led_card, trump)) {
         return false;
-    }else if (is_led(b, led_card, trump)) {
+    } else if (is_led(b, led_card, trump)) {
         return true;
     }
     return a < b;

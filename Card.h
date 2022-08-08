@@ -4,7 +4,6 @@
  *
  * Represents a single playing card
  */
-
 #include <iostream>
 #include <string>
 
