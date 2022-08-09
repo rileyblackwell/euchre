@@ -90,6 +90,52 @@ TEST(test_player_make_trump_is_dealer) {
 //     delete alice;       
 // }
  
+TEST(test_player_lead_card) {
+    Player * alice = Player_factory("Alice", "Simple");
+    alice->add_card(Card(Card::RANK_QUEEN, Card::SUIT_CLUBS));
+    alice->add_card(Card(Card::RANK_KING, Card::SUIT_SPADES));
+    alice->add_card(Card(Card::RANK_TEN, Card::SUIT_DIAMONDS));
+    alice->add_card(Card(Card::RANK_ACE, Card::SUIT_HEARTS));
+    alice->add_card(Card(Card::RANK_JACK, Card::SUIT_DIAMONDS)); 
 
+    ASSERT_EQUAL(alice->lead_card(Card::SUIT_HEARTS), Card(Card::RANK_KING, Card::SUIT_SPADES));
+    
+    delete alice;    
+}
+
+TEST(test_player_lead_card_all_trump_hand) {
+    Player * alice = Player_factory("Alice", "Simple");
+   
+    alice->add_card(Card(Card::RANK_NINE, Card::SUIT_HEARTS));
+    alice->add_card(Card(Card::RANK_QUEEN, Card::SUIT_HEARTS));
+    alice->add_card(Card(Card::RANK_ACE, Card::SUIT_HEARTS));
+    alice->add_card(Card(Card::RANK_JACK, Card::SUIT_HEARTS)); 
+    alice->add_card(Card(Card::RANK_JACK, Card::SUIT_DIAMONDS));
+    
+    ASSERT_EQUAL(alice->lead_card(Card::SUIT_HEARTS), Card(Card::RANK_JACK, Card::SUIT_HEARTS));
+    
+    delete alice;    
+}
+
+TEST(test_player_play_card) {
+    Player * alice = Player_factory("Alice", "Simple");
+    alice->add_card(Card(Card::RANK_ACE, Card::SUIT_CLUBS));
+    alice->add_card(Card(Card::RANK_KING, Card::SUIT_CLUBS));
+    alice->add_card(Card(Card::RANK_TEN, Card::SUIT_DIAMONDS));
+    alice->add_card(Card(Card::RANK_QUEEN, Card::SUIT_HEARTS));
+    alice->add_card(Card(Card::RANK_KING, Card::SUIT_HEARTS));
+
+    // Tests when player can follow suit.
+    ASSERT_EQUAL(alice->play_card(Card(Card::RANK_NINE, Card::SUIT_HEARTS), Card::SUIT_CLUBS), 
+                 Card(Card::RANK_KING, Card::SUIT_HEARTS));
+
+    alice->add_card(Card(Card::RANK_KING, Card::SUIT_HEARTS));
+    
+    // Tests when player can't follow suit.
+    ASSERT_EQUAL(alice->play_card(Card(Card::RANK_NINE, Card::SUIT_SPADES), Card::SUIT_DIAMONDS), 
+                 Card(Card::RANK_QUEEN, Card::SUIT_HEARTS));   
+    
+    delete alice; 
+}
 
 TEST_MAIN()
