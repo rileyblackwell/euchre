@@ -102,7 +102,7 @@ class SimplePlayer: public Player {
     if (!is_hand_all_trump(hand, trump)) { 
       Card max_card = hand[0]; 
       int max_index = 0;
-      for (int i = 0; i < MAX_HAND_SIZE; ++i) { 
+      for (int i = 0; i < static_cast<int>(hand.size()); ++i) { 
         Card card = hand[i];
         if (!card.is_trump(trump)) {
           // If the starting max_card is a trump card then a non-trump card
@@ -126,7 +126,7 @@ class SimplePlayer: public Player {
     // If entire hand is trump cards.
     Card max_trump_card = hand[0];
     int max_trump_index = 0;
-    for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (Card_less(max_trump_card, card, trump)) {
         max_trump_card = card;
@@ -169,7 +169,7 @@ class SimplePlayer: public Player {
     if (!(led_suit_index == -1)) {
       Card max_card = hand[led_suit_index]; 
       int max_index = led_suit_index;
-      for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+      for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
         Card card = hand[i];
         if (is_led_suit(card, led_card, trump)) {
           if (card > max_card) {
@@ -186,7 +186,7 @@ class SimplePlayer: public Player {
 
     Card min_card = hand[0];
     int min_index = 0;
-    for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (Card_less(card, min_card, led_card, trump)) {
         min_card = card;
