@@ -2,6 +2,7 @@
 #include <string>
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include "Player.h"
 
 using namespace std;
@@ -33,7 +34,7 @@ class SimplePlayer: public Player {
     assert(round == 1 || round == 2);
     if (round == 1) {
       int trump_face_cards = 0;
-      for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+      for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
         Card card = hand[i];
         if (card.is_trump(upcard.get_suit()) && card.is_face()) {
           trump_face_cards += 1;
@@ -52,7 +53,7 @@ class SimplePlayer: public Player {
       return true;
     }
     int trump_face_cards = 0;
-    for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (card.is_trump(Suit_next(upcard.get_suit())) && card.is_face()) {
         trump_face_cards += 1;
@@ -70,7 +71,7 @@ class SimplePlayer: public Player {
   void add_and_discard(const Card &upcard) override {
     assert(!hand.empty());
     Card min_card = upcard;
-    for (int i = 0; i < MAX_HAND_SIZE; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (card < min_card) {
         Card temp_min_card = card;
@@ -81,8 +82,7 @@ class SimplePlayer: public Player {
   }
 
   static bool is_hand_all_trump(const vector<Card> &hand, const string &trump) {
-    const int hand_size = static_cast<int>(hand.size());
-    for (int i = 0; i < hand_size; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (!card.is_trump(trump)) {
         return false;
@@ -148,8 +148,7 @@ class SimplePlayer: public Player {
   // If no card can follow suit returns -1.
   static int get_led_suit_index(const vector<Card> &hand, const Card &led_card, 
                           const string &trump) {
-    const int hand_size = static_cast<int>(hand.size());
-    for (int i = 0; i < hand_size; ++i) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
       if (is_led_suit(card, led_card, trump)) {
         return i;
@@ -208,6 +207,7 @@ class SimplePlayer: public Player {
     vector<Card> hand;
 };
 
+
 class HumanPlayer: public Player {
  public:
   HumanPlayer() : name("default_human_player") {}
@@ -220,7 +220,10 @@ class HumanPlayer: public Player {
   //REQUIRES player has less than MAX_HAND_SIZE cards
   //EFFECTS  adds Card c to Player's hand
   void add_card(const Card &c) override {
-    assert(false);
+    assert(MAX_HAND_SIZE > static_cast<int>(hand.size()));
+    hand.push_back(c);
+    // Sorts hand after adding a card.
+    sort(hand.begin(), hand.end());
   }
 
   //REQUIRES round is 1 or 2
@@ -230,13 +233,39 @@ class HumanPlayer: public Player {
   //  not modify order_up_suit and return false.
   bool make_trump(const Card &upcard, bool is_dealer,
                   int round, string &order_up_suit) const override {
-    assert(false);
+    assert(round == 1 || round == 2);
+    print_hand(hand);
+    
+    string suit;
+    if (round == 2 && is_dealer) {
+      cout << "Screw the dealer invoked.  The upcard is " << upcard << ".  Player must order up a valid suit. " << endl;
+    } else {
+       cout << "Round " << round << " of making" << ".  The upcard is " << upcard << ".  Enter a valid suit or pass. " << endl;
+    }
+    cin >> suit;
+    if (suit == "pass") {
+      return false;
+    }
+    order_up_suit = suit;
+    return true; 
   }
 
   //REQUIRES Player has at least one card
   //EFFECTS  Player adds one card to hand and removes one card from hand.
   void add_and_discard(const Card &upcard) override {
-    assert(false);
+    assert(!hand.empty());
+    print_hand(hand);
+
+    string card;
+    cout << "The upcard is " << upcard << ".  Enter a number to discard a card or -1 for the upcard. " << endl;
+    cin >> card;
+    const int card_num = stoi(card);
+    
+    if (card_num != -1) {
+      hand[card_num] = upcard;
+      // Sorts hand after adding a card.
+      sort(hand.begin(), hand.end());
+    } 
   }
 
   //REQUIRES Player has at least one card, trump is a valid suit
@@ -244,20 +273,59 @@ class HumanPlayer: public Player {
   //  "Lead" means to play the first Card in a trick.  The card
   //  is removed the player's hand.
   Card lead_card(const string &trump) override {
-    assert(false);
+    check_suit_is_valid(trump);
+    assert(!hand.empty());
+    print_hand(hand);
+
+    string card;
+    cout << trump << " is the trump suit.  Enter a number to play a card. " << endl;
+    cin >> card;
+    const int card_num = stoi(card);
+    
+    Card play_card = hand[card_num];
+    hand[card_num] = hand[hand.size() - 1];
+    hand.pop_back();
+    // Sorts hand after removing a card.
+    sort(hand.begin(), hand.end()); 
+    return play_card;
   }
 
   //REQUIRES Player has at least one card, trump is a valid suit
   //EFFECTS  Plays one Card from Player's hand according to their strategy.
   //  The card is removed from the player's hand.
   Card play_card(const Card &led_card, const string &trump) override {
-    assert(false);
+    check_suit_is_valid(trump);
+    assert(!hand.empty());
+    print_hand(hand);
+
+    string card;
+    cout << trump << " is the trump suit.  " << led_card << " is the led card.  Enter a number to play a card. " << endl;
+    cin >> card;
+    const int card_num = stoi(card);
+    
+    Card play_card = hand[card_num];
+    hand[card_num] = hand[hand.size() - 1];
+    hand.pop_back();
+    // Sorts hand after removing a card.
+    sort(hand.begin(), hand.end()); 
+    return play_card;
   }
 
+  static void print_hand(const vector<Card> &hand) {
+    for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
+      cout << i << ". " << hand[i] << endl;
+    }  
+  }
+
+  static void check_suit_is_valid(const string &suit) {
+    assert(suit == Card::SUIT_SPADES || suit == Card::SUIT_HEARTS || suit == Card::SUIT_CLUBS || suit == Card::SUIT_DIAMONDS);
+  }
+   
   private:
     string name;
-    vector<Card> hand;
+    vector<Card> hand;   
 };
+
 
 //EFFECTS: Returns a pointer to a player with the given name and strategy
 //To create an object that won't go out of scope when the function returns,

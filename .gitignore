@@ -4,3 +4,4 @@
 .vscode
 Makefile
 testing.cpp
+HumanPlayer_tests.cpp

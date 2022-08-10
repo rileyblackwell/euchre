@@ -3,6 +3,9 @@
 /* Game.h
  * Euchre game interface
  */
+#include <iostream>
+#include "Player.h"
+#include "Pack.h"
 
 
 class Game {

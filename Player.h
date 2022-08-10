@@ -6,6 +6,7 @@
 #include "Card.h"
 #include <string>
 #include <vector>
+#include <algorithm>
 
 
 class Player {
