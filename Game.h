@@ -55,11 +55,12 @@ class Game {
         Card lead_trick(const std::string &trump, const int trick_winner) const;
         
         // REQUIRES: 0 <= leader && leader < 4.  trump is a valid suit.
+        // EFFECTS: Returns the player who wins the trick.
         int play_trick(const Card &led_card, int leader, const std::string &trump) const;
 
-        // REQUIRES: 0 <= trick_winner && trick_winner.
+        // REQUIRES: 0 <= trick_winner && trick_winner < 4.
         // MODIFIES: trick_score.
-        // EFFECTS: Records the score for the team that won the trick.  
+        // EFFECTS: Records 1 point for the team that won the trick.  
         void score_trick(const int trick_winner);
 
         // EFFECTS: Returns the team that ordered up.
@@ -68,9 +69,14 @@ class Game {
         // EFFECTS: Returns the team who won the hand.
         int get_team_of_winning_hand() const;
 
-        void score_hand(const int maker_team, const int hand_winner);
+        // REQUIRES: maker_team == 0 || maker_team == 1 
+        // && hand_winner_team == 0 || hand_winner_team == 1.
+        // MODIFIES: score, trick_score, dealer, hand.
+        // EFFECTS: Records 1 point for the team that won a hand and an extra point 
+        // if the winning team had march or euchred. Resets trick_score to 0 for both teams.  
+        // Moves the dealer 1 to the left. Increments hand by 1.
+        void score_hand(const int maker_team, const int hand_winner_team);
         
-
     private:
         int dealer;
         int maker;

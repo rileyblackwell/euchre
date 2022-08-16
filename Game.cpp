@@ -145,6 +145,7 @@ Card Game::lead_trick(const string &trump, const int trick_winner) const {
 }
 
 // REQUIRES: 0 <= leader && leader < 4.  trump is a valid suit.
+// EFFECTS: Returns the player who wins the trick.
 int Game::play_trick(const Card &led_card, int leader, const string &trump) const {
     is_valid_player(leader);
     is_valid_suit(trump);
@@ -163,9 +164,9 @@ int Game::play_trick(const Card &led_card, int leader, const string &trump) cons
     return max_player;   
 }
 
-// REQUIRES: 0 <= trick_winner && trick_winner.
+// REQUIRES: 0 <= trick_winner && trick_winner < 4.
 // MODIFIES: trick_score.
-// EFFECTS: Records the score for the team that won the trick.
+// EFFECTS: Records 1 point for the team that won the trick.
 void Game::score_trick(const int trick_winner) {
     is_valid_player(trick_winner);
     if (trick_winner == 0 || trick_winner == 2) {
@@ -191,16 +192,23 @@ int Game::get_team_of_winning_hand() const {
     return 1;
 }
 
-void Game::score_hand(const int maker_team, const int hand_winner) {
-    cout << *players[hand_winner] << " and " << *players[hand_winner + 2] << " win the hand" << endl;  
-    score[hand_winner]++; 
-    if (hand_winner == maker_team && trick_score[hand_winner] == 5) {   
+// REQUIRES: maker_team == 0 || maker_team == 1 
+// && hand_winner_team == 0 || hand_winner_team == 1.
+// MODIFIES: score, trick_score, dealer, hand.
+// EFFECTS: Records 1 point for the team that won a hand and an extra point 
+// if the winning team had march or euchred. Resets trick_score to 0 for both teams.  
+// Moves the dealer 1 to the left. Increments hand by 1.
+void Game::score_hand(const int maker_team, const int hand_winner_team) {
+    assert((maker_team == 0 || maker_team == 1) && (hand_winner_team == 0 || hand_winner_team == 1));
+    cout << *players[hand_winner_team] << " and " << *players[hand_winner_team + 2] << " win the hand" << endl;  
+    score[hand_winner_team]++; 
+    if (hand_winner_team == maker_team && trick_score[hand_winner_team] == 5) {   
         cout << "march!" << endl;
-        score[hand_winner]++;      
+        score[hand_winner_team]++;      
     }
-    if (hand_winner != maker_team) {
+    if (hand_winner_team != maker_team) {
         cout << "euchred!" << endl;
-        score[hand_winner]++; 
+        score[hand_winner_team]++; 
     }  
     cout << *players[0] << " and " << *players[2] << " have " << get_score_team_0()
          << " points" << endl << *players[1] << " and " << *players[3] << " have " 
