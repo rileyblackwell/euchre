@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 // EFFECTS: Initializes the Pack to be in the following standard order:
 //          the cards of the lowest suit arranged from lowest rank to
 //          highest rank, followed by the cards of the next lowest suit
@@ -64,10 +65,10 @@ void Pack::shuffle() {
     }
     cards = temp_cards; 
   }  
-  Pack::reset();
+  reset();
 }
 
 // EFFECTS: returns true if there are no more cards left in the pack
 bool Pack::empty() const {
-  return next == PACK_SIZE;
+  return next >= PACK_SIZE;
 }

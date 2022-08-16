@@ -73,7 +73,7 @@ class SimplePlayer: public Player {
     Card min_card = upcard;
     for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
       Card card = hand[i];
-      if (card < min_card) {
+      if (Card_less(card, min_card, upcard.get_suit())) {
         Card temp_min_card = card;
         hand[i] = min_card;
         min_card = temp_min_card;  
@@ -171,7 +171,7 @@ class SimplePlayer: public Player {
       for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
         Card card = hand[i];
         if (is_led_suit(card, led_card, trump)) {
-          if (card > max_card) {
+          if (Card_less(max_card, card, trump)) {
             max_card = card;
             max_index = i;
           }
@@ -234,15 +234,12 @@ class HumanPlayer: public Player {
   bool make_trump(const Card &upcard, bool is_dealer,
                   int round, string &order_up_suit) const override {
     assert(round == 1 || round == 2);
-    print_hand(hand);
     
+    print_hand(hand, get_name());
     string suit;
-    if (round == 2 && is_dealer) {
-      cout << "Screw the dealer invoked.  The upcard is " << upcard << ".  Player must order up a valid suit. " << endl;
-    } else {
-       cout << "Round " << round << " of making" << ".  The upcard is " << upcard << ".  Enter a valid suit or pass. " << endl;
-    }
+    cout << "Human player " << get_name() << ", please enter a suit, or \"pass\":" << endl;
     cin >> suit;
+    
     if (suit == "pass") {
       return false;
     }
@@ -254,10 +251,11 @@ class HumanPlayer: public Player {
   //EFFECTS  Player adds one card to hand and removes one card from hand.
   void add_and_discard(const Card &upcard) override {
     assert(!hand.empty());
-    print_hand(hand);
-
+    
+    print_hand(hand, get_name());
     string card;
-    cout << "The upcard is " << upcard << ".  Enter a number to discard a card or -1 for the upcard. " << endl;
+    cout << "Discard upcard: [-1] " << endl << "Human player" << get_name() 
+         << ", please select a card to discard:" << endl;
     cin >> card;
     const int card_num = stoi(card);
     
@@ -275,10 +273,10 @@ class HumanPlayer: public Player {
   Card lead_card(const string &trump) override {
     check_suit_is_valid(trump);
     assert(!hand.empty());
-    print_hand(hand);
-
+    
+    print_hand(hand, get_name());
     string card;
-    cout << trump << " is the trump suit.  Enter a number to play a card. " << endl;
+    cout << "Human player " << get_name() << ", please select a card:" << endl;
     cin >> card;
     const int card_num = stoi(card);
     
@@ -296,10 +294,10 @@ class HumanPlayer: public Player {
   Card play_card(const Card &led_card, const string &trump) override {
     check_suit_is_valid(trump);
     assert(!hand.empty());
-    print_hand(hand);
-
+    
+    print_hand(hand, get_name());
     string card;
-    cout << trump << " is the trump suit.  " << led_card << " is the led card.  Enter a number to play a card. " << endl;
+    cout << "Human player " << get_name() << ", please select a card:" << endl;
     cin >> card;
     const int card_num = stoi(card);
     
@@ -311,9 +309,9 @@ class HumanPlayer: public Player {
     return play_card;
   }
 
-  static void print_hand(const vector<Card> &hand) {
+  static void print_hand(const vector<Card> &hand, const string &name) {
     for (int i = 0; i < static_cast<int>(hand.size()); ++i) {
-      cout << i << ". " << hand[i] << endl;
+      cout << "Human player " << name << "'s hand: [" << i << "] " << hand[i] << endl;  
     }  
   }
 
