@@ -15,9 +15,18 @@ static void move_to_left(int &player) {
     }
 }
 
+static void is_valid_suit(const string &suit) {
+    assert(suit == Card::SUIT_SPADES || suit == Card::SUIT_HEARTS || suit == Card::SUIT_CLUBS || suit == Card::SUIT_DIAMONDS);
+}
+
+static void is_valid_player(const int player) {
+    assert(0 <= player && player < 4);
+}
+
 // EFFECTS: Intializes dealer, maker, hand to 0. 
 Game::Game() : dealer(0), maker(0), hand(0) {}
 
+// REQUIRES: game_players is a vector of Player*.  game_pack contains a valid Euchre deck.
 // EFFECTS: Intializes dealer, maker, hand to 0.  Intializes the players of the game.  
 // Intializes pack of cards. Intializes score and trick_score to 0. 
 Game::Game(vector<Player*> &game_players, Pack &game_pack) 
@@ -43,11 +52,10 @@ int Game::get_dealer() const {
     return dealer;
 }
 
-int Game::get_maker() const {
-    return maker;
-}
-
+// REQUIRES: points_to_win > 0
+// EFFECTS: returns true if a team has won the game, otherwise returns false. 
 bool Game::win_game(const int points_to_win, const int score_team_0, const int score_team_1) const {
+    assert(points_to_win > 0);
     if (score_team_0 >= points_to_win) {
         cout << *players[0] << " and " << *players[2] << " win!" << endl;
         return true;
@@ -58,8 +66,9 @@ bool Game::win_game(const int points_to_win, const int score_team_0, const int s
     return false;
 }
 
-// MODIFIES: Pack.
-// EFFECTS: Pack is shuffled if shuffle_on == true.
+// MODIFIES: pack.
+// EFFECTS: If shuffle_on == true then pack is shuffled, otherwise
+// pack is reset without shuffling.
 void Game::shuffle(const bool shuffle_on) {
     if (shuffle_on) {
         pack.shuffle();
@@ -68,6 +77,7 @@ void Game::shuffle(const bool shuffle_on) {
     }  
 }
 
+// MODIFIES: pack. 
 // EFFECTS: Deals 5 cards to each player.  Returns the upcard.
 Card Game::deal() {
     int eldest = dealer;
@@ -87,6 +97,9 @@ Card Game::deal() {
     return upcard;     
 }
 
+// MODIFIES: The player who orders up suit becomes the maker.
+// EFFECTS: Returns the suit that is ordered up.  If suit is ordered up
+// in round 1 then the dealer is given the option to pick up the upcard.
 string Game::make_trump(const Card &upcard) {
     int eldest = dealer;
     bool is_dealer = false;
@@ -120,13 +133,21 @@ string Game::make_trump(const Card &upcard) {
     return order_up_suit;
 }
 
+// REQUIRES: 0 <= trick_winner && trick_winner < 4.  trump is a valid suit.
+// EFFECTS: Player who won the previous trick leads the next trick. 
+// Returns the led_card.
 Card Game::lead_trick(const string &trump, const int trick_winner) const {
+    is_valid_player(trick_winner);
+    is_valid_suit(trump);
     Card led_card = players[trick_winner]->lead_card(trump);
     cout << led_card << " led by " << *players[trick_winner] << endl;
     return led_card; 
 }
 
-int Game::play_trick(const Card &led_card, int leader, const string &trump) {
+// REQUIRES: 0 <= leader && leader < 4.  trump is a valid suit.
+int Game::play_trick(const Card &led_card, int leader, const string &trump) const {
+    is_valid_player(leader);
+    is_valid_suit(trump);
     Card max_card = led_card;
     int max_player = leader; 
     for (int i = 0; i < 3; ++i) {
@@ -142,7 +163,11 @@ int Game::play_trick(const Card &led_card, int leader, const string &trump) {
     return max_player;   
 }
 
+// REQUIRES: 0 <= trick_winner && trick_winner.
+// MODIFIES: trick_score.
+// EFFECTS: Records the score for the team that won the trick.
 void Game::score_trick(const int trick_winner) {
+    is_valid_player(trick_winner);
     if (trick_winner == 0 || trick_winner == 2) {
         trick_score[0]++;
     } else {
@@ -150,7 +175,16 @@ void Game::score_trick(const int trick_winner) {
     }
 }
 
-int Game::win_hand() {
+// EFFECTS: Returns the team that ordered up.
+int Game::get_making_team() const {
+    if (maker == 0 || maker == 2) {
+        return 0;
+    } 
+    return 1; 
+}
+
+// EFFECTS: Returns the team who won the hand.
+int Game::get_team_of_winning_hand() const {
     if (trick_score[0] >= 3) {
         return 0;
     }

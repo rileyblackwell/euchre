@@ -3,8 +3,10 @@
 #include "Game.h"
 #include "Player.h"
 #include "Pack.h"
+#include "Card.h"
 
 using namespace std;
+
 
 static bool is_simple_or_human_player(const string &player_type) {
     if (player_type != "Simple" && player_type != "Human") {
@@ -36,17 +38,12 @@ static void print_args(int argc, char *argv[]) {
     cout << endl;
 }
 
-static void run_simulation(char *argv[], Pack &pack, vector<Player*> &players) {
-    players.push_back(Player_factory(argv[4], argv[5]));
-    players.push_back(Player_factory(argv[6], argv[7]));
-    players.push_back(Player_factory(argv[8], argv[9]));
-    players.push_back(Player_factory(argv[10], argv[11]));
+static void run_simulation(vector<Player*> &players, Pack &pack, 
+                           const string &shuffle, const int points_to_win) {
     bool shuffle_on = true;
-    string shuffle = argv[2];
     if (shuffle  == "noshuffle") {
         shuffle_on = false;
     }
-    const int points_to_win = stoi(argv[3]);
     
     Game game(players, pack);
     
@@ -66,18 +63,8 @@ static void run_simulation(char *argv[], Pack &pack, vector<Player*> &players) {
             trick_winner = game.play_trick(led_card, trick_winner, trump_suit);
             game.score_trick(trick_winner);
         }
-        int maker_team = game.get_maker();
-        if (maker_team == 0 || maker_team == 2) {
-            maker_team = 0;
-        } else {
-            maker_team = 1;
-        } 
-        game.score_hand(maker_team, game.win_hand());   
-    }
-        
-    for (int i = 0; i < int(players.size()); ++i) {
-        delete players[i];
-    }      
+        game.score_hand(game.get_making_team(), game.get_team_of_winning_hand());   
+    }       
 }
 
 
@@ -96,9 +83,22 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     Pack pack(pack_input);
-    vector<Player*> players;
     
-    run_simulation(argv, pack, players); 
+    vector<Player*> players;
+    // Player_factory creates each player in dynamic memory.
+    players.push_back(Player_factory(argv[4], argv[5]));
+    players.push_back(Player_factory(argv[6], argv[7]));
+    players.push_back(Player_factory(argv[8], argv[9]));
+    players.push_back(Player_factory(argv[10], argv[11]));
+    
+    const string shuffle = argv[2];
+    const int points_to_win = stoi(argv[3]); 
+    run_simulation(players, pack, shuffle, points_to_win);
+
+    // Delete each player that was created with dynamic memory in the Player_factory.    
+    for (int i = 0; i < int(players.size()); ++i) {
+        delete players[i];
+    }   
     
     return 0;
 }
