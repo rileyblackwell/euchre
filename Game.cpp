@@ -103,11 +103,12 @@ string Game::make_trump(const Card &upcard) {
             is_dealer = true;
         }
         if (players[eldest]->make_trump(upcard, is_dealer, round, order_up_suit)) {
+            maker = eldest;
+            cout << *players[maker] << " orders up " << order_up_suit << endl;
             if (round == 1) {
                 players[dealer]->add_and_discard(upcard);
             }
-            maker = eldest;
-            cout << *players[maker] << " orders up " << order_up_suit << endl << endl;
+            cout << endl;
             return order_up_suit;    
         }
         cout << *players[eldest] << " passes" << endl;

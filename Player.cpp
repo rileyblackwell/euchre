@@ -254,7 +254,7 @@ class HumanPlayer: public Player {
     
     print_hand(hand, get_name());
     string card;
-    cout << "Discard upcard: [-1] " << endl << "Human player" << get_name() 
+    cout << "Discard upcard: [-1]" << endl << "Human player " << get_name() 
          << ", please select a card to discard:" << endl;
     cin >> card;
     const int card_num = stoi(card);
