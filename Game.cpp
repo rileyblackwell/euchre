@@ -23,8 +23,14 @@ static void is_valid_player(const int player) {
     assert(0 <= player && player < 4);
 }
 
-// EFFECTS: Intializes dealer, maker, hand to 0. 
-Game::Game() : dealer(0), maker(0), hand(0) {}
+// EFFECTS: Intializes dealer, maker, hand to 0.
+// Intializes score and trick_score to 0.  
+Game::Game() : dealer(0), maker(0), hand(0) {
+    score[0] = 0;
+    score[1] = 0;
+    trick_score[0] = 0;
+    trick_score[1] = 0;    
+}
 
 // REQUIRES: game_players is a vector of Player*.  game_pack contains a valid Euchre deck.
 // EFFECTS: Intializes dealer, maker, hand to 0.  Intializes the players of the game.  
@@ -66,7 +72,6 @@ bool Game::win_game(const int points_to_win, const int score_team_0, const int s
     return false;
 }
 
-// MODIFIES: pack.
 // EFFECTS: If shuffle_on == true then pack is shuffled, otherwise
 // pack is reset without shuffling.
 void Game::shuffle(const bool shuffle_on) {
@@ -77,7 +82,6 @@ void Game::shuffle(const bool shuffle_on) {
     }  
 }
 
-// MODIFIES: pack. 
 // EFFECTS: Deals 5 cards to each player.  Returns the upcard.
 Card Game::deal() {
     int eldest = dealer;

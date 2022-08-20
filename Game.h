@@ -14,7 +14,8 @@
 
 class Game {
     public:
-        // EFFECTS: Intializes dealer, maker, hand to 0. 
+        // EFFECTS: Intializes dealer, maker, hand to 0.
+        // Intializes score and trick_score to 0.   
         Game();
 
         // REQUIRES: game_players is a vector of Player*.  game_pack contains a valid Euchre deck.
@@ -35,12 +36,10 @@ class Game {
         // EFFECTS: returns true if a team has won the game, otherwise returns false. 
         bool win_game(const int points_to_win, const int score_team_0, const int score_team_1) const;
 
-        // MODIFIES: pack. 
         // EFFECTS: If shuffle_on == true then pack is shuffled, otherwise
         // pack is reset without shuffling.
         void shuffle(const bool shuffle_on);
         
-        // MODIFIES: pack. 
         // EFFECTS: Deals 5 cards to each player.  Returns the upcard.
         Card deal();
 
