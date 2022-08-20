@@ -109,7 +109,7 @@ string Game::make_trump(const Card &upcard) {
     bool is_dealer = false;
     int round = 1;
     string order_up_suit;
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 8; ++i) {
         // Defines variables for round 2 of making.
         if (i == 4) {
             is_dealer = false;
@@ -130,10 +130,6 @@ string Game::make_trump(const Card &upcard) {
         }
         cout << *players[eldest] << " passes" << endl;
     }
-    // Screw the dealer.  Dealer must order up suit if all other players pass in round 2.
-    players[dealer]->make_trump(upcard, true, 2, order_up_suit);
-    maker = dealer;
-    cout << *players[maker] << " orders up " << order_up_suit << endl << endl;
     return order_up_suit;
 }
 
